@@ -13,6 +13,8 @@ Checklist Buddy is a web-based tool designed for pilots to create and use intera
 - **Green Indicator Lights**: Both indicator lights are green for better visibility in cockpit environments
 - **Optimized Spacing**: Reduced space between LEDs and labels for a more compact display
 - **Enhanced Typography**: Larger label text for better readability in cockpit conditions
+- **Configuration Saving**: Save and load your checklist configurations using browser cookies
+- **Smart Naming**: Automatically suggests the checklist title as the configuration name when saving
 
 ## How to Use
 
@@ -20,6 +22,8 @@ Checklist Buddy is a web-based tool designed for pilots to create and use intera
 2. The default checklist (Cessna 172 Takeoff) will be loaded automatically
 3. Use the toggle switches to mark items as completed
 4. To create your own checklist, edit the markdown in the text area and click "Generate Checklist"
+5. Save your configurations by clicking "Save Current" and confirming or modifying the suggested name
+6. Load saved configurations by selecting them from the dropdown and clicking "Load"
 
 ## Markdown Format
 
@@ -41,6 +45,19 @@ For example:
 ```
 
 Each line starting with a dash (-) creates a new toggle switch. The text before the pipe symbol (|) becomes the top label, and the text after becomes the bottom label.
+
+## Saving Configurations
+
+Checklist Buddy allows you to save multiple checklist configurations:
+
+1. Create your checklist using the markdown format
+2. Click "Save Current" to save the configuration
+3. The system will automatically suggest the checklist title as the configuration name
+4. You can accept the suggested name or enter a different one
+5. To load a saved configuration, select it from the dropdown and click "Load"
+6. To delete a configuration, select "-- Delete Selected Configuration --" from the dropdown
+
+All configurations are saved in browser cookies and will persist between visits to the application.
 
 ## Browser Compatibility
 

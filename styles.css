@@ -73,7 +73,8 @@ header h1 {
 
 /* Checklist Container Styles */
 .checklist-container {
-    background: linear-gradient(to right, #2c3e50, #4a6491);
+    background: url('carbon.jpg') no-repeat center center;
+    background-size: cover;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -479,13 +480,13 @@ footer {
 
 .switch-led-red {
   bottom: -3.5em;
-  border-top: 0.1em solid rgba(0,161,75,0.5);
+  border-top: 0.1em solid rgba(161,0,0,0.5);
   border-bottom: 0.1em solid rgba(255,255,255,0.25);
 }
 
 .switch-led-red .switch-led-light {
-  background: rgb(0,161,75);
-  border: 0.1em solid rgb(0,104,56);
+  background: rgb(161,0,0);
+  border: 0.1em solid rgb(104,0,0);
 }
 
 .switch-led-red .switch-led-glow {
@@ -535,16 +536,41 @@ footer {
   filter: alpha(opacity=40);
 }
 
+/* Remove these styles to prevent bottom LED from lighting up when switch is up */
 .switch input:checked~.switch-led-red {
-  -webkit-box-shadow: 0 0 3em rgb(0,161,75);
-  -moz-box-shadow: 0 0 3em rgb(0,161,75);
-  box-shadow: 0 0 3em rgb(0,161,75);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 .switch input:checked~.switch-led-red .switch-led-glow {
+  background: none;
+  filter: alpha(opacity=0);
+}
+
+/* Add styles for the red LED to light up when switch is down (unchecked) */
+.switch input:not(:checked)~.switch-led-red {
+  -webkit-box-shadow: 0 0 3em rgb(161,0,0);
+  -moz-box-shadow: 0 0 3em rgb(161,0,0);
+  box-shadow: 0 0 3em rgb(161,0,0);
+}
+
+.switch input:not(:checked)~.switch-led-red .switch-led-glow {
   background: #fff;
   background: rgba(255, 255, 255, 0.4);
   filter: alpha(opacity=40);
+}
+
+/* Turn off green LED when switch is down */
+.switch input:not(:checked)~.switch-led-green {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.switch input:not(:checked)~.switch-led-green .switch-led-glow {
+  background: none;
+  filter: alpha(opacity=0);
 }
 
 /* Auto-scaling for switches */

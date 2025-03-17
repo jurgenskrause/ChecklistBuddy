@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const switchesContainer = document.getElementById('switchesContainer');
     const toggleAllUpButton = document.getElementById('toggleAllUp');
     const toggleAllDownButton = document.getElementById('toggleAllDown');
+    const saveConfigButton = document.getElementById('saveConfig');
+    const loadConfigButton = document.getElementById('loadConfig');
+    const savedConfigsSelect = document.getElementById('savedConfigs');
 
     // Sample markdown for initial load
     const sampleMarkdown = `# Cessna 172 Takeoff Checklist
@@ -18,15 +21,25 @@ document.addEventListener('DOMContentLoaded', function() {
 - Doors & Windows | CLOSED & LOCKED
 - Transponder | ALT`;
 
-    markdownInput.value = sampleMarkdown;
+    // Load saved configurations from cookies
+    loadSavedConfigs();
 
-    // Generate checklist on page load with sample data
-    generateChecklistFromMarkdown(sampleMarkdown);
+    // Check if there's a last used configuration
+    const lastUsedConfig = getCookie('lastUsedConfig');
+    if (lastUsedConfig) {
+        markdownInput.value = lastUsedConfig;
+        generateChecklistFromMarkdown(lastUsedConfig);
+    } else {
+        markdownInput.value = sampleMarkdown;
+        generateChecklistFromMarkdown(sampleMarkdown);
+    }
 
     // Event Listeners
     generateButton.addEventListener('click', function() {
         const markdown = markdownInput.value;
         generateChecklistFromMarkdown(markdown);
+        // Save as last used config
+        setCookie('lastUsedConfig', markdown, 365);
     });
 
     toggleAllUpButton.addEventListener('click', function() {
@@ -36,6 +49,26 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleAllDownButton.addEventListener('click', function() {
         toggleAllSwitches(false);
     });
+
+    if (saveConfigButton) {
+        saveConfigButton.addEventListener('click', function() {
+            saveCurrentConfig();
+        });
+    }
+
+    if (loadConfigButton) {
+        loadConfigButton.addEventListener('click', function() {
+            loadSelectedConfig();
+        });
+    }
+
+    if (savedConfigsSelect) {
+        savedConfigsSelect.addEventListener('change', function() {
+            if (savedConfigsSelect.value === 'delete-selected') {
+                deleteSelectedConfig();
+            }
+        });
+    }
 
     /**
      * Parse markdown and generate checklist switches
@@ -234,6 +267,168 @@ document.addEventListener('DOMContentLoaded', function() {
         if (itemCount > 0 && itemCount <= 15) {
             switchesRow.classList.add(`auto-scale-${itemCount}`);
         }
+    }
+
+    /**
+     * Set a cookie with the given name, value, and expiration days
+     * @param {string} name - Cookie name
+     * @param {string} value - Cookie value
+     * @param {number} days - Number of days until expiration
+     */
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+    }
+
+    /**
+     * Get a cookie value by name
+     * @param {string} name - Cookie name
+     * @returns {string} Cookie value or empty string if not found
+     */
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
+        return "";
+    }
+
+    /**
+     * Delete a cookie by name
+     * @param {string} name - Cookie name
+     */
+    function deleteCookie(name) {
+        document.cookie = name + '=; Max-Age=-99999999;';
+    }
+
+    /**
+     * Save the current configuration with a name
+     */
+    function saveCurrentConfig() {
+        // Extract title from markdown to use as default name
+        const markdown = markdownInput.value;
+        let defaultName = '';
+        
+        // Parse the markdown to find the title
+        const lines = markdown.split('\n');
+        for (const line of lines) {
+            if (line.startsWith('#')) {
+                defaultName = line.substring(1).trim();
+                break;
+            }
+        }
+        
+        // If no title found, use a generic name
+        if (!defaultName) {
+            defaultName = 'My Checklist';
+        }
+        
+        const configName = prompt("Enter a name for this checklist configuration:", defaultName);
+        if (!configName || configName.trim() === '') return;
+
+        // Get existing saved configs
+        let savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
+        
+        // Add new config
+        savedConfigs[configName] = markdownInput.value;
+        
+        // Save back to cookie
+        setCookie('savedConfigs', JSON.stringify(savedConfigs), 365);
+        
+        // Update the dropdown
+        loadSavedConfigs();
+        
+        alert(`Configuration "${configName}" has been saved.`);
+    }
+
+    /**
+     * Load saved configurations into the dropdown
+     */
+    function loadSavedConfigs() {
+        if (!savedConfigsSelect) return;
+        
+        // Clear existing options
+        while (savedConfigsSelect.options.length > 0) {
+            savedConfigsSelect.remove(0);
+        }
+        
+        // Add default option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- Select a saved configuration --';
+        savedConfigsSelect.appendChild(defaultOption);
+        
+        // Get saved configs
+        const savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
+        
+        // Add each config as an option
+        for (const configName in savedConfigs) {
+            const option = document.createElement('option');
+            option.value = configName;
+            option.textContent = configName;
+            savedConfigsSelect.appendChild(option);
+        }
+        
+        // Add delete option if there are saved configs
+        if (Object.keys(savedConfigs).length > 0) {
+            const deleteOption = document.createElement('option');
+            deleteOption.value = 'delete-selected';
+            deleteOption.textContent = '-- Delete Selected Configuration --';
+            deleteOption.style.color = 'red';
+            savedConfigsSelect.appendChild(deleteOption);
+        }
+    }
+
+    /**
+     * Load the selected configuration
+     */
+    function loadSelectedConfig() {
+        if (!savedConfigsSelect || savedConfigsSelect.value === '' || savedConfigsSelect.value === 'delete-selected') return;
+        
+        const configName = savedConfigsSelect.value;
+        const savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
+        
+        if (savedConfigs[configName]) {
+            markdownInput.value = savedConfigs[configName];
+            generateChecklistFromMarkdown(savedConfigs[configName]);
+            setCookie('lastUsedConfig', savedConfigs[configName], 365);
+            alert(`Configuration "${configName}" has been loaded.`);
+        }
+    }
+
+    /**
+     * Delete the selected configuration
+     */
+    function deleteSelectedConfig() {
+        const selectedIndex = savedConfigsSelect.selectedIndex;
+        if (selectedIndex <= 0) return; // Skip if default option or delete option
+        
+        const configName = savedConfigsSelect.options[selectedIndex].value;
+        if (configName === 'delete-selected') return;
+        
+        if (confirm(`Are you sure you want to delete the configuration "${configName}"?`)) {
+            // Get saved configs
+            let savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
+            
+            // Delete the selected config
+            delete savedConfigs[configName];
+            
+            // Save back to cookie
+            setCookie('savedConfigs', JSON.stringify(savedConfigs), 365);
+            
+            // Update the dropdown
+            loadSavedConfigs();
+            
+            alert(`Configuration "${configName}" has been deleted.`);
+        }
+        
+        // Reset selection to default
+        savedConfigsSelect.selectedIndex = 0;
     }
 
     // Handle window resize to adjust scaling

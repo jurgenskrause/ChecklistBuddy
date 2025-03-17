@@ -35,6 +35,27 @@
             font-size: 1.2rem !important;
             margin: 5px 0 !important;
         }
+
+        /* Config management styles */
+        .config-management {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .config-management select {
+            flex-grow: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .config-management button {
+            padding: 8px 15px;
+        }
     </style>
 </head>
 <body>
@@ -69,11 +90,21 @@
 - Transponder | ALT"></textarea>
                 <button id="generateChecklist" class="control-btn">Generate Checklist</button>
                 <p class="format-help">Format: <code># Title</code> for checklist title, <code>- Item | State</code> for each switch</p>
+                
+                <!-- Configuration Management -->
+                <div class="config-management">
+                    <select id="savedConfigs">
+                        <option value="">-- Select a saved configuration --</option>
+                    </select>
+                    <button id="loadConfig" class="control-btn">Load</button>
+                    <button id="saveConfig" class="control-btn">Save Current</button>
+                </div>
+                <p class="format-help">Your configurations are saved in browser cookies and will persist between visits.</p>
             </div>
         </div>
 
         <footer>
-            <p>&copy; 2023 Checklist Buddy - A Tool for Pilots</p>
+            <p>&copy; 2025 Jurgens Krause</p>
         </footer>
     </div>
 
