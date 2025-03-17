@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Buddy - Flight Checklist Tool for Pilots</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional inline styles for immediate changes */
+        .checklist-title {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .switch-led-green {
+            top: -3.5em !important;
+        }
+        
+        .switch-led-red {
+            bottom: -3.5em !important;
+        }
+        
+        .switch {
+            margin: 3em 1em !important;
+        }
+        
+        .switch-wrapper {
+            margin: 5px !important;
+        }
+        
+        .switch-label-top, .switch-label-bottom {
+            font-size: 1.2rem !important;
+            margin: 5px 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Checklist Buddy</h1>
+            <p>The Ultimate Flight Checklist Tool for Pilots</p>
+        </header>
+
+        <div class="main-content">
+            <div class="checklist-controls">
+                <button id="toggleAllUp" class="control-btn">Toggle All Up</button>
+                <button id="toggleAllDown" class="control-btn">Toggle All Down</button>
+            </div>
+
+            <!-- Title will be inserted here by JavaScript -->
+            <div id="checklistTitleContainer"></div>
+
+            <div class="checklist-container">
+                <div id="switchesContainer" class="switches-container">
+                    <!-- Switches will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="markdown-input">
+                <h2>Checklist Configuration</h2>
+                <p>Enter your checklist items in markdown format below:</p>
+                <textarea id="markdownInput" placeholder="# Takeoff Checklist
+- Flaps | SET
+- Fuel Pump | ON
+- Mixture | RICH
+- Transponder | ALT"></textarea>
+                <button id="generateChecklist" class="control-btn">Generate Checklist</button>
+                <p class="format-help">Format: <code># Title</code> for checklist title, <code>- Item | State</code> for each switch</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2023 Checklist Buddy - A Tool for Pilots</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

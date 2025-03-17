@@ -1,0 +1,607 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c3e50, #4a6491);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+/* Main Content Styles */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.checklist-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.control-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Checklist Title */
+.checklist-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Checklist Container Styles */
+.checklist-container {
+    background: linear-gradient(to right, #2c3e50, #4a6491);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.checklist-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>');
+    background-size: 10px 10px;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.switches-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Switch Label Styles */
+.switch-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.switch-label-top, .switch-label-bottom {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin: 5px 0;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Markdown Input Styles */
+.markdown-input {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-input h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.markdown-input p {
+    margin-bottom: 15px;
+}
+
+#markdownInput {
+    width: 100%;
+    height: 200px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    margin-bottom: 15px;
+}
+
+.format-help {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.format-help code {
+    background-color: #f5f5f5;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    color: #e74c3c;
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Toggle Switch Styles */
+/* From Uiverse.io by csemszepp - Modified */ 
+.switch {
+  display: inline-block;
+  margin: 3em 1em;
+  position: relative;
+  border-radius: 3.5em;
+  transform: scale(0.65);
+  -webkit-box-shadow: 0 0 0.5em rgba(2,255,255,0.2);
+  -moz-box-shadow: 0 0 0.5em rgba(255,255,255,0.2);
+  box-shadow: 0 0 0.5em rgba(255,255,255,0.2);
+}
+
+.switch label {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch span {
+  display: block;
+  -webkit-transition: top 0.2s;
+  -moz-transition: top 0.2s;
+  -ms-transition: top 0.2s;
+  -o-transition: top 0.2s;
+  transition: top 0.2s;
+}
+
+.switch-border1 {
+  border: 0.1em solid #000;
+  border-radius: 3.5em;
+  -webkit-box-shadow: 0 0.2em rgba(255, 255, 255, 0.2);
+  -moz-box-shadow: 0 0.2em rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0.2em rgba(255, 255, 255, 0.2);
+}
+
+.switch-border2 {
+  width: 6.6em;
+  height: 12.6em;
+  position: relative;
+  border: 0.1em solid #323232;
+  background-image: -webkit-gradient(linear, left top, right top, from(#2D2D2D), color-stop(0.5, #4B4B4B), to(#2D2D2D));
+  background-image: -webkit-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -moz-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -ms-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -o-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: linear-gradient(to right, #2D2D2D, #4B4B4B, #2D2D2D);
+  border-radius: 3.4em;
+}
+
+.switch-border2:before,
+.switch-border2:after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  opacity: .3;
+  border-radius: 3.4em;
+}
+
+.switch-border2:before {
+  background: -webkit-gradient(linear, left top, left bottom, from(#000), to(rgba(0,0,0,0)));
+  background: -webkit-linear-gradient(#000, rgba(0,0,0,0));
+  background: -moz-linear-gradient(#000, rgba(0,0,0,0));
+  background: -ms-linear-gradient(#000, rgba(0,0,0,0));
+  background: -o-linear-gradient(#000, rgba(0,0,0,0));
+  background: linear-gradient(#000, rgba(0,0,0,0));
+}
+
+.switch-border2:after {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0)), to(#000));
+  background: -webkit-linear-gradient(rgba(0,0,0,0), #000);
+  background: -moz-linear-gradient(rgba(0,0,0,0), #000);
+  background: -ms-linear-gradient(rgba(0,0,0,0), #000);
+  background: -o-linear-gradient(rgba(0,0,0,0), #000);
+  background: linear-gradient(rgba(0,0,0,0), #000);
+}
+
+.switch-top {
+  width: 100%;
+  height: 84%;
+  position: absolute;
+  top: 8%;
+  left: 0;
+  z-index: 1;
+  background-image: -webkit-gradient(linear, left top, right top, from(#2D2D2D), color-stop(0.5, #4B4B4B), to(#2D2D2D));
+  background-image: -webkit-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -moz-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -ms-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: -o-linear-gradient(left, #2D2D2D, #4B4B4B, #2D2D2D);
+  background-image: linear-gradient(to right, #2D2D2D, #4B4B4B, #2D2D2D);
+  border-radius: 3.4em;
+}
+
+.switch-shadow {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  border-radius: 3.4em;
+  -webkit-box-shadow: 0 0 2em black inset;
+  -moz-box-shadow: 0 0 2em black inset;
+  box-shadow: 0 0 2em black inset;
+}
+
+.switch-handle-left,
+.switch-handle-right {
+  content: '';
+  display: block;
+  width: 3.6em;
+  height: 0;
+  position: absolute;
+  top: 6.6em;
+  z-index: 2;
+  border-bottom: 4.5em solid #111;
+  border-left: 0.7em solid transparent;
+  border-right: 0.7em solid transparent;
+  border-radius: 0;
+}
+
+.switch-handle-left {
+  left: 0.8em;
+}
+
+.switch-handle-right {
+  right: 0.8em;
+}
+
+.switch-handle {
+  width: 3.6em;
+  height: 4.5em;
+  position: absolute;
+  top: 6.6em;
+  left: 1.5em;
+  z-index: 3;
+  background: #333;
+  background-image: -webkit-gradient(linear, left top, right top, from(#111), color-stop(0.4, #777), color-stop(0.5, #888), color-stop(0.6, #777), to(#111));
+  background-image: -webkit-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -moz-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -ms-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -o-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: linear-gradient(to right, #111, #777 40%, #888, #777 60%, #111);
+  border-radius: 0;
+}
+
+.switch-handle-top {
+  width: 5em;
+  height: 5em;
+  position: absolute;
+  top: 8.5em;
+  left: 0.8em;
+  z-index: 4;
+  background-color: #555;
+  background-image: -webkit-gradient(linear, left top, right top, from(#5F5F5F), to(#878787));
+  background-image: -webkit-linear-gradient(left, #5F5F5F, #878787);
+  background-image: -moz-linear-gradient(left, #5F5F5F, #878787);
+  background-image: -ms-linear-gradient(left, #5F5F5F, #878787);
+  background-image: -o-linear-gradient(left, #5F5F5F, #878787);
+  background-image: linear-gradient(to right, #5F5F5F, #878787);
+  border-top: 0.2em solid #AEB2B3;
+  border-radius: 2.5em;
+}
+
+.switch-handle-bottom {
+  width: 3.6em;
+  height: 3.6em;
+  position: absolute;
+  top: 4.7em;
+  left: 1.5em;
+  z-index: 3;
+  background: #333;
+  background-image: -webkit-gradient(linear, left top, right top, from(#111), color-stop(0.4, #777), color-stop(0.5, #888), color-stop(0.6, #777), to(#111));
+  background-image: -webkit-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -moz-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -ms-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: -o-linear-gradient(left, #111, #777 40%, #888, #777 60%, #111);
+  background-image: linear-gradient(to right, #111, #777 40%, #888, #777 60%, #111);
+  border-top: 0.2em solid #141414;
+  border-radius: 1.8em;
+}
+
+.switch-handle-base {
+  width: 4.2em;
+  height: 4.2em;
+  position: absolute;
+  top: 3.8em;
+  left: 1.2em;
+  z-index: 2;
+  border-top: 0.2em solid rgba(255,255,255,0.35);
+  border-radius: 2.1em;
+  -webkit-box-shadow: 0 0 0.5em rgba(0,0,0,0.8) inset;
+  -moz-box-shadow: 0 0 0.5em rgba(0,0,0,0.8) inset;
+  box-shadow: 0 0 0.5em rgba(0,0,0,0.8) inset;
+}
+
+.switch-led {
+  position: absolute;
+  left: 2em;
+  border-radius: 1.4em;
+}
+
+.switch-led-border {
+  border: 0.2em solid black;
+  border-radius: 1.3em;
+}
+
+.switch-led-light {
+  border-radius: 1.1em;
+  -webkit-box-shadow: 0 0 0.5em rgba(255,255,255,0.5) inset;
+  -moz-box-shadow: 0 0 0.5em rgba(255,255,255,0.5) inset;
+  box-shadow: 0 0 0.5em rgba(255,255,255,0.5) inset;
+}
+
+.switch-led-glow {
+  width: 2em;
+  height: 2em;
+  position: relative;
+  border-radius: 1em;
+}
+
+.switch-led-glow:before {
+  content: '';
+  display: block;
+  width: 0.6em;
+  height: 0.6em;
+  position: absolute;
+  top: 0.3em;
+  left: 0.7em;
+  background: rgba(255,255,255,0.2);
+  border-radius: 0.3em;
+  -webkit-box-shadow: 0 0 1em rgba(255,255,255,0.75);
+  -moz-box-shadow: 0 0 1em rgba(255,255,255,0.75);
+  box-shadow: 0 0 1em rgba(255,255,255,0.75);
+}
+
+.switch-led-glow:after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+  border: 1em solid #fff;
+  border-color: transparent #fff transparent #fff;
+  border-radius: 1em;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.switch-led:after {
+  display: none;
+}
+
+.switch-led-green:after {
+  content: '';
+  top: -1.8em;
+}
+
+.switch-led-red:after {
+  content: '';
+  bottom: -1.8em;
+}
+
+.switch-led-green {
+  top: -3.5em;
+  border-top: 0.1em solid rgba(0,161,75,0.5);
+  border-bottom: 0.1em solid rgba(255,255,255,0.25);
+}
+
+.switch-led-green .switch-led-light {
+  background: rgb(0,161,75);
+  border: 0.1em solid rgb(0,104,56);
+}
+
+.switch-led-red {
+  bottom: -3.5em;
+  border-top: 0.1em solid rgba(0,161,75,0.5);
+  border-bottom: 0.1em solid rgba(255,255,255,0.25);
+}
+
+.switch-led-red .switch-led-light {
+  background: rgb(0,161,75);
+  border: 0.1em solid rgb(0,104,56);
+}
+
+.switch-led-red .switch-led-glow {
+  background: #fff;
+  background: rgba(255, 255, 255, 0.3);
+  filter: alpha(opacity=30);
+}
+
+/* Switch on */
+.switch input:checked~.switch-handle-left, .switch input:checked~.switch-handle-right {
+  top: 1.5em;
+  border-bottom: 0;
+  border-top: 4.5em solid #111;
+}
+
+.switch input:checked~.switch-handle {
+  top: 1.5em;
+}
+
+.switch input:checked~.switch-handle-top {
+  top: -1em;
+  border-top: 0;
+  border-bottom: 0.2em solid #AEB2B3;
+}
+
+.switch input:checked~.switch-handle-bottom {
+  top: 4.2em;
+  border-top: 0;
+  border-bottom: 0.2em solid #141414;
+}
+
+.switch input:checked~.switch-handle-base {
+  top: 4.5em;
+  border-top: 0;
+  border-bottom: 0.2em solid rgba(255,255,255,0.35);
+}
+
+.switch input:checked~.switch-led-green {
+  -webkit-box-shadow: 0 0 3em rgb(0,161,75);
+  -moz-box-shadow: 0 0 3em rgb(0,161,75);
+  box-shadow: 0 0 3em rgb(0,161,75);
+}
+
+.switch input:checked~.switch-led-green .switch-led-glow {
+  background: #fff;
+  background: rgba(255, 255, 255, 0.4);
+  filter: alpha(opacity=40);
+}
+
+.switch input:checked~.switch-led-red {
+  -webkit-box-shadow: 0 0 3em rgb(0,161,75);
+  -moz-box-shadow: 0 0 3em rgb(0,161,75);
+  box-shadow: 0 0 3em rgb(0,161,75);
+}
+
+.switch input:checked~.switch-led-red .switch-led-glow {
+  background: #fff;
+  background: rgba(255, 255, 255, 0.4);
+  filter: alpha(opacity=40);
+}
+
+/* Auto-scaling for switches */
+.switches-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .switches-container {
+        gap: 5px;
+    }
+    
+    .switch-wrapper {
+        margin: 2px;
+        width: 100px;
+    }
+    
+    .switch {
+        transform: scale(0.5);
+        margin: 3em 0.5em;
+    }
+    
+    .switch-label-top, .switch-label-bottom {
+        font-size: 1.1rem;
+        height: 30px;
+        margin: 3px 0;
+    }
+}
+
+/* Auto-scaling for different screen sizes */
+@media (max-width: 1200px) {
+    .switches-container {
+        justify-content: flex-start;
+        padding: 10px 5px;
+    }
+    
+    .checklist-container {
+        overflow-x: auto;
+    }
+}
+
+/* Dynamic scaling based on number of switches */
+.auto-scale-1 .switch { transform: scale(0.9); }
+.auto-scale-2 .switch { transform: scale(0.85); }
+.auto-scale-3 .switch { transform: scale(0.8); }
+.auto-scale-4 .switch { transform: scale(0.75); }
+.auto-scale-5 .switch { transform: scale(0.7); }
+.auto-scale-6 .switch { transform: scale(0.65); }
+.auto-scale-7 .switch { transform: scale(0.6); }
+.auto-scale-8 .switch { transform: scale(0.55); }
+.auto-scale-9 .switch { transform: scale(0.5); }
+.auto-scale-10 .switch { transform: scale(0.45); }
+.auto-scale-11 .switch { transform: scale(0.4); }
+.auto-scale-12 .switch { transform: scale(0.35); }
+.auto-scale-13 .switch, .auto-scale-14 .switch, .auto-scale-15 .switch { transform: scale(0.3); }
