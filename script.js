@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleAllUpButton = document.getElementById('toggleAllUp');
     const toggleAllDownButton = document.getElementById('toggleAllDown');
     const saveConfigButton = document.getElementById('saveConfig');
-    const loadConfigButton = document.getElementById('loadConfig');
+    const deleteConfigButton = document.getElementById('deleteConfig');
     const savedConfigsSelect = document.getElementById('savedConfigs');
+    const configNameInput = document.getElementById('configName');
+    const configMessage = document.getElementById('configMessage');
 
     // Sample markdown for initial load
     const sampleMarkdown = `# KODIAK
@@ -28,15 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (lastUsedConfig) {
         markdownInput.value = lastUsedConfig;
         generateChecklistFromMarkdown(lastUsedConfig);
+        updateConfigNameFromMarkdown(lastUsedConfig);
     } else {
         markdownInput.value = sampleMarkdown;
         generateChecklistFromMarkdown(sampleMarkdown);
+        updateConfigNameFromMarkdown(sampleMarkdown);
     }
 
     // Event Listeners
     generateButton.addEventListener('click', function() {
         const markdown = markdownInput.value;
         generateChecklistFromMarkdown(markdown);
+        updateConfigNameFromMarkdown(markdown);
         // Save as last used config
         setCookie('lastUsedConfig', markdown, 365);
     });
@@ -49,24 +54,61 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleAllSwitches(false);
     });
 
-    if (saveConfigButton) {
-        saveConfigButton.addEventListener('click', function() {
-            saveCurrentConfig();
+    if (deleteConfigButton) {
+        deleteConfigButton.addEventListener('click', function() {
+            const selectedConfig = savedConfigsSelect.value;
+            if (!selectedConfig) {
+                showConfigMessage('Please select a configuration to delete', 'error');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete "${selectedConfig}"?`)) {
+                deleteSelectedConfig();
+            }
         });
     }
 
-    if (loadConfigButton) {
-        loadConfigButton.addEventListener('click', function() {
-            loadSelectedConfig();
+    if (saveConfigButton) {
+        saveConfigButton.addEventListener('click', function() {
+            let configName = configNameInput.value.trim();
+            if (!configName) {
+                // Try to extract name from markdown if field is empty
+                configName = extractTitleFromMarkdown(markdownInput.value);
+                if (!configName) {
+                    showConfigMessage('Please enter a configuration name', 'error');
+                    return;
+                }
+            }
+            saveCurrentConfig(configName);
         });
     }
 
     if (savedConfigsSelect) {
         savedConfigsSelect.addEventListener('change', function() {
-            if (savedConfigsSelect.value === 'delete-selected') {
-                deleteSelectedConfig();
+            const selectedValue = savedConfigsSelect.value;
+            if (selectedValue && selectedValue !== 'delete-selected') {
+                loadSelectedConfig(selectedValue);
             }
         });
+    }
+
+    // Helper function to extract title from markdown
+    function extractTitleFromMarkdown(markdown) {
+        const lines = markdown.split('\n');
+        for (const line of lines) {
+            if (line.startsWith('#')) {
+                return line.substring(1).trim();
+            }
+        }
+        return '';
+    }
+
+    // Update config name input with title from markdown
+    function updateConfigNameFromMarkdown(markdown) {
+        const title = extractTitleFromMarkdown(markdown);
+        if (title) {
+            configNameInput.value = title;
+        }
     }
 
     /**
@@ -153,12 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const topLabelElement = document.createElement('div');
             topLabelElement.className = 'switch-label-top';
             topLabelElement.textContent = item.topLabel;
-            topLabelElement.style.textAlign = 'center';
+            topLabelElement.style.fontSize = '1.2rem';
             topLabelElement.style.margin = '5px 0';
             topLabelElement.style.height = '40px';
-            topLabelElement.style.display = 'flex';
-            topLabelElement.style.alignItems = 'center';
-            topLabelElement.style.justifyContent = 'center';
             switchWrapper.appendChild(topLabelElement);
 
             // Switch
@@ -202,12 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const bottomLabelElement = document.createElement('div');
             bottomLabelElement.className = 'switch-label-bottom';
             bottomLabelElement.textContent = item.bottomLabel;
-            bottomLabelElement.style.textAlign = 'center';
+            bottomLabelElement.style.fontSize = '1.2rem';
             bottomLabelElement.style.margin = '5px 0';
             bottomLabelElement.style.height = '40px';
-            bottomLabelElement.style.display = 'flex';
-            bottomLabelElement.style.alignItems = 'center';
-            bottomLabelElement.style.justifyContent = 'center';
             switchWrapper.appendChild(bottomLabelElement);
 
             // Add to container
@@ -216,9 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Auto-scale switches based on number of items
         autoScaleSwitches(items.length);
-        
-        // Auto-adjust font size for all labels
-        autoAdjustLabelFontSize();
     }
 
     /**
@@ -314,129 +347,63 @@ document.addEventListener('DOMContentLoaded', function() {
         document.cookie = name + '=; Max-Age=-99999999;';
     }
 
-    /**
-     * Save the current configuration with a name
-     */
-    function saveCurrentConfig() {
-        // Extract title from markdown to use as default name
-        const markdown = markdownInput.value;
-        let defaultName = '';
-        
-        // Parse the markdown to find the title
-        const lines = markdown.split('\n');
-        for (const line of lines) {
-            if (line.startsWith('#')) {
-                defaultName = line.substring(1).trim();
-                break;
-            }
-        }
-        
-        // If no title found, use a generic name
-        if (!defaultName) {
-            defaultName = 'My Checklist';
-        }
-        
-        const configName = prompt("Enter a name for this checklist configuration:", defaultName);
-        if (!configName || configName.trim() === '') return;
-
-        // Get existing saved configs
-        let savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
-        
-        // Add new config
-        savedConfigs[configName] = markdownInput.value;
-        
-        // Save back to cookie
-        setCookie('savedConfigs', JSON.stringify(savedConfigs), 365);
-        
-        // Update the dropdown
-        loadSavedConfigs();
-        
-        alert(`Configuration "${configName}" has been saved.`);
+    function showConfigMessage(message, type) {
+        configMessage.textContent = message;
+        configMessage.className = `config-message ${type}`;
+        setTimeout(() => {
+            configMessage.className = 'config-message';
+        }, 3000);
     }
 
-    /**
-     * Load saved configurations into the dropdown
-     */
+    function saveCurrentConfig(configName) {
+        const markdown = markdownInput.value;
+        const configs = JSON.parse(getCookie('savedConfigs') || '{}');
+        configs[configName] = markdown;
+        setCookie('savedConfigs', JSON.stringify(configs), 365);
+        configNameInput.value = '';
+        loadSavedConfigs();
+        showConfigMessage(`Configuration "${configName}" saved successfully`, 'success');
+        // Update the config name input field with the title
+        updateConfigNameFromMarkdown(markdown);
+    }
+
     function loadSavedConfigs() {
-        if (!savedConfigsSelect) return;
+        const configs = JSON.parse(getCookie('savedConfigs') || '{}');
+        savedConfigsSelect.innerHTML = '<option value="">-- Select a saved configuration --</option>';
         
-        // Clear existing options
-        while (savedConfigsSelect.options.length > 0) {
-            savedConfigsSelect.remove(0);
-        }
-        
-        // Add default option
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Select a saved configuration --';
-        savedConfigsSelect.appendChild(defaultOption);
-        
-        // Get saved configs
-        const savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
-        
-        // Add each config as an option
-        for (const configName in savedConfigs) {
+        Object.keys(configs).forEach(configName => {
             const option = document.createElement('option');
             option.value = configName;
             option.textContent = configName;
             savedConfigsSelect.appendChild(option);
+        });
+    }
+
+    function loadSelectedConfig(selectedConfig) {
+        if (!selectedConfig) {
+            showConfigMessage('Please select a configuration to load', 'error');
+            return;
         }
-        
-        // Add delete option if there are saved configs
-        if (Object.keys(savedConfigs).length > 0) {
-            const deleteOption = document.createElement('option');
-            deleteOption.value = 'delete-selected';
-            deleteOption.textContent = '-- Delete Selected Configuration --';
-            deleteOption.style.color = 'red';
-            savedConfigsSelect.appendChild(deleteOption);
+
+        const configs = JSON.parse(getCookie('savedConfigs') || '{}');
+        if (configs[selectedConfig]) {
+            markdownInput.value = configs[selectedConfig];
+            generateChecklistFromMarkdown(configs[selectedConfig]);
+            updateConfigNameFromMarkdown(configs[selectedConfig]);
+            setCookie('lastUsedConfig', configs[selectedConfig], 365);
+            showConfigMessage(`Configuration "${selectedConfig}" loaded successfully`, 'success');
         }
     }
 
-    /**
-     * Load the selected configuration
-     */
-    function loadSelectedConfig() {
-        if (!savedConfigsSelect || savedConfigsSelect.value === '' || savedConfigsSelect.value === 'delete-selected') return;
-        
-        const configName = savedConfigsSelect.value;
-        const savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
-        
-        if (savedConfigs[configName]) {
-            markdownInput.value = savedConfigs[configName];
-            generateChecklistFromMarkdown(savedConfigs[configName]);
-            setCookie('lastUsedConfig', savedConfigs[configName], 365);
-            alert(`Configuration "${configName}" has been loaded.`);
-        }
-    }
-
-    /**
-     * Delete the selected configuration
-     */
     function deleteSelectedConfig() {
-        const selectedIndex = savedConfigsSelect.selectedIndex;
-        if (selectedIndex <= 0) return; // Skip if default option or delete option
-        
-        const configName = savedConfigsSelect.options[selectedIndex].value;
-        if (configName === 'delete-selected') return;
-        
-        if (confirm(`Are you sure you want to delete the configuration "${configName}"?`)) {
-            // Get saved configs
-            let savedConfigs = JSON.parse(getCookie('savedConfigs') || '{}');
-            
-            // Delete the selected config
-            delete savedConfigs[configName];
-            
-            // Save back to cookie
-            setCookie('savedConfigs', JSON.stringify(savedConfigs), 365);
-            
-            // Update the dropdown
-            loadSavedConfigs();
-            
-            alert(`Configuration "${configName}" has been deleted.`);
-        }
-        
-        // Reset selection to default
-        savedConfigsSelect.selectedIndex = 0;
+        const selectedConfig = savedConfigsSelect.value;
+        if (!selectedConfig) return;
+
+        const configs = JSON.parse(getCookie('savedConfigs') || '{}');
+        delete configs[selectedConfig];
+        setCookie('savedConfigs', JSON.stringify(configs), 365);
+        loadSavedConfigs();
+        showConfigMessage(`Configuration "${selectedConfig}" deleted successfully`, 'success');
     }
 
     // Handle window resize to adjust scaling
@@ -444,63 +411,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const items = document.querySelectorAll('.switch-wrapper');
         autoScaleSwitches(items.length);
     });
-
-    /**
-     * Auto-adjust font size for all switch labels to ensure they fit
-     * and maintain uniform font size across all labels
-     */
-    function autoAdjustLabelFontSize() {
-        const topLabels = document.querySelectorAll('.switch-label-top');
-        const bottomLabels = document.querySelectorAll('.switch-label-bottom');
-        const allLabels = [...topLabels, ...bottomLabels];
-        
-        if (allLabels.length === 0) return;
-        
-        // Start with maximum font size
-        let fontSize = 1.2; // Starting font size in rem
-        const minFontSize = 0.6; // Minimum font size in rem
-        const maxFontSize = 1.2; // Maximum font size in rem
-        const labelWidth = 120; // Label width in px
-        const decrementStep = 0.05; // How much to reduce font size each iteration
-        
-        let allFit = false;
-        
-        // Find the minimum font size needed for all labels to fit
-        while (!allFit && fontSize >= minFontSize) {
-            allFit = true;
-            
-            for (const label of allLabels) {
-                // Apply current font size
-                label.style.fontSize = `${fontSize}rem`;
-                
-                // Check if content is overflowing
-                if (label.scrollWidth > labelWidth) {
-                    allFit = false;
-                    break;
-                }
-            }
-            
-            if (!allFit) {
-                fontSize -= decrementStep;
-            }
-        }
-        
-        // Apply the final font size to all labels for uniformity
-        const finalFontSize = Math.max(fontSize, minFontSize);
-        
-        for (const label of allLabels) {
-            label.style.fontSize = `${finalFontSize}rem`;
-            
-            // Ensure center alignment
-            label.style.textAlign = 'center';
-            label.style.display = 'flex';
-            label.style.justifyContent = 'center';
-            label.style.alignItems = 'center';
-            
-            // Ensure text doesn't overflow
-            label.style.overflow = 'hidden';
-            label.style.textOverflow = 'ellipsis';
-            label.style.width = '100%';
-        }
-    }
 }); 
