@@ -10,16 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedConfigsSelect = document.getElementById('savedConfigs');
 
     // Sample markdown for initial load
-    const sampleMarkdown = `# Cessna 172 Takeoff Checklist
-- Fuel Selector | BOTH
-- Mixture | RICH
-- Carburetor Heat | OFF
-- Throttle | 1700 RPM
-- Flight Instruments | CHECK
-- Flight Controls | FREE & CORRECT
-- Elevator Trim | TAKEOFF
-- Doors & Windows | CLOSED & LOCKED
-- Transponder | ALT`;
+    const sampleMarkdown = `# KODIAK
+- FUEL, CAPS, SELECTORS | SELECTORS BRAKES
+- CONTROLS, SYS, TAWS | TAWS, YAWS OFF
+- SWITCHES, INSTRUMENTS | VREF
+- FLAPS, RADAR | LIGHTS, INLET
+- TRIM, ABORT, EMER | ABORT, EMER PRO
+- IGN, INLET, LIGHTS | PROP, HARNESS
+- HARNESS, IDLE, GOV | GEAR, FLAPS
+- TAKEOFF, CLEARANCE | LANDING, CLEARANCE`;
 
     // Load saved configurations from cookies
     loadSavedConfigs();
@@ -154,9 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const topLabelElement = document.createElement('div');
             topLabelElement.className = 'switch-label-top';
             topLabelElement.textContent = item.topLabel;
-            topLabelElement.style.fontSize = '1.2rem';
+            topLabelElement.style.textAlign = 'center';
             topLabelElement.style.margin = '5px 0';
             topLabelElement.style.height = '40px';
+            topLabelElement.style.display = 'flex';
+            topLabelElement.style.alignItems = 'center';
+            topLabelElement.style.justifyContent = 'center';
             switchWrapper.appendChild(topLabelElement);
 
             // Switch
@@ -200,9 +202,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const bottomLabelElement = document.createElement('div');
             bottomLabelElement.className = 'switch-label-bottom';
             bottomLabelElement.textContent = item.bottomLabel;
-            bottomLabelElement.style.fontSize = '1.2rem';
+            bottomLabelElement.style.textAlign = 'center';
             bottomLabelElement.style.margin = '5px 0';
             bottomLabelElement.style.height = '40px';
+            bottomLabelElement.style.display = 'flex';
+            bottomLabelElement.style.alignItems = 'center';
+            bottomLabelElement.style.justifyContent = 'center';
             switchWrapper.appendChild(bottomLabelElement);
 
             // Add to container
@@ -211,6 +216,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Auto-scale switches based on number of items
         autoScaleSwitches(items.length);
+        
+        // Auto-adjust font size for all labels
+        autoAdjustLabelFontSize();
     }
 
     /**
@@ -436,4 +444,63 @@ document.addEventListener('DOMContentLoaded', function() {
         const items = document.querySelectorAll('.switch-wrapper');
         autoScaleSwitches(items.length);
     });
+
+    /**
+     * Auto-adjust font size for all switch labels to ensure they fit
+     * and maintain uniform font size across all labels
+     */
+    function autoAdjustLabelFontSize() {
+        const topLabels = document.querySelectorAll('.switch-label-top');
+        const bottomLabels = document.querySelectorAll('.switch-label-bottom');
+        const allLabels = [...topLabels, ...bottomLabels];
+        
+        if (allLabels.length === 0) return;
+        
+        // Start with maximum font size
+        let fontSize = 1.2; // Starting font size in rem
+        const minFontSize = 0.6; // Minimum font size in rem
+        const maxFontSize = 1.2; // Maximum font size in rem
+        const labelWidth = 120; // Label width in px
+        const decrementStep = 0.05; // How much to reduce font size each iteration
+        
+        let allFit = false;
+        
+        // Find the minimum font size needed for all labels to fit
+        while (!allFit && fontSize >= minFontSize) {
+            allFit = true;
+            
+            for (const label of allLabels) {
+                // Apply current font size
+                label.style.fontSize = `${fontSize}rem`;
+                
+                // Check if content is overflowing
+                if (label.scrollWidth > labelWidth) {
+                    allFit = false;
+                    break;
+                }
+            }
+            
+            if (!allFit) {
+                fontSize -= decrementStep;
+            }
+        }
+        
+        // Apply the final font size to all labels for uniformity
+        const finalFontSize = Math.max(fontSize, minFontSize);
+        
+        for (const label of allLabels) {
+            label.style.fontSize = `${finalFontSize}rem`;
+            
+            // Ensure center alignment
+            label.style.textAlign = 'center';
+            label.style.display = 'flex';
+            label.style.justifyContent = 'center';
+            label.style.alignItems = 'center';
+            
+            // Ensure text doesn't overflow
+            label.style.overflow = 'hidden';
+            label.style.textOverflow = 'ellipsis';
+            label.style.width = '100%';
+        }
+    }
 }); 
